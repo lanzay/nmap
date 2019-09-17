@@ -185,15 +185,87 @@ func (s Scan) Run() (output Scan, err error) {
 		return s, s.configErr
 	}
 
-	args, err := s.CreateNmapArgs()
+	s.configOpts = []string{"-oX", "-"}
+
+	stdout, err := s.Exec()
 	if err != nil {
 		return s, err
+	}
+	scan, err := s.ParseXML(stdout)
+	return scan, nil
+
+	//args, err := s.CreateNmapArgs()
+	//if err != nil {
+	//	return s, err
+	//}
+	//
+	//// Find path for nmap binary
+	//nmapPath, err := exec.LookPath("nmap")
+	//if err != nil {
+	//	return s, err
+	//}
+	//
+	//cmd := exec.Command(nmapPath, args...)
+	//
+	//// Configure output pipes
+	//errPipe, err := cmd.StderrPipe()
+	//if err != nil {
+	//	return s, err
+	//}
+	//
+	//outPipe, err := cmd.StdoutPipe()
+	//if err != nil {
+	//	return s, err
+	//}
+	//
+	//// Start command
+	//if err := cmd.Start(); err != nil {
+	//	return s, err
+	//}
+	//
+	//// Read output
+	//stdout, err := ioutil.ReadAll(outPipe)
+	//if err != nil {
+	//	return s, err
+	//}
+	//
+	//stderr, err := ioutil.ReadAll(errPipe)
+	//if err != nil {
+	//	return s, err
+	//}
+	//
+	//// Wait on command to be finished
+	//if err := cmd.Wait(); err != nil {
+	//	fmt.Println(err)
+	//	return s, errors.New(err.Error() + "\n" + string(stderr))
+	//}
+
+	//// Parse command output
+	//rawScan, err := parseXML(stdout)
+	//if err != nil {
+	//	return s, err
+	//}
+	//
+	//scan := rawScan.cleanScan(s)
+
+	//return scan, nil
+}
+
+func (s Scan) Exec() (stdout []byte, err error) {
+
+	if s.configErr != nil {
+		return nil, s.configErr
+	}
+
+	args, err := s.CreateNmapArgs()
+	if err != nil {
+		return nil, err
 	}
 
 	// Find path for nmap binary
 	nmapPath, err := exec.LookPath("nmap")
 	if err != nil {
-		return s, err
+		return nil, err
 	}
 
 	cmd := exec.Command(nmapPath, args...)
@@ -201,35 +273,40 @@ func (s Scan) Run() (output Scan, err error) {
 	// Configure output pipes
 	errPipe, err := cmd.StderrPipe()
 	if err != nil {
-		return s, err
+		return nil, err
 	}
 
 	outPipe, err := cmd.StdoutPipe()
 	if err != nil {
-		return s, err
+		return nil, err
 	}
 
 	// Start command
 	if err := cmd.Start(); err != nil {
-		return s, err
+		return nil, err
 	}
 
 	// Read output
-	stdout, err := ioutil.ReadAll(outPipe)
+	stdout, err = ioutil.ReadAll(outPipe)
 	if err != nil {
-		return s, err
+		return nil, err
 	}
 
 	stderr, err := ioutil.ReadAll(errPipe)
 	if err != nil {
-		return s, err
+		return nil, err
 	}
 
 	// Wait on command to be finished
 	if err := cmd.Wait(); err != nil {
 		fmt.Println(err)
-		return s, errors.New(err.Error() + "\n" + string(stderr))
+		return nil, errors.New(err.Error() + "\n" + string(stderr))
 	}
+
+	return stdout, err
+}
+
+func (s Scan) ParseXML(stdout []byte) (output Scan, err error) {
 
 	// Parse command output
 	rawScan, err := parseXML(stdout)

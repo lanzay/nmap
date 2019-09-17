@@ -14,7 +14,7 @@ import (
 // arguments for an nmap scan.
 func (s *Scan) CreateNmapArgs() ([]string, error) {
 	// Parse arguments
-	args := []string{"-oX", "-"}
+	args := []string{}
 	const seperator string = ","
 
 	// Set up ports
