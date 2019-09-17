@@ -59,7 +59,10 @@ func (s *Scan) CreateNmapArgs() ([]string, error) {
 	if len(s.configHosts) == 0 {
 		s.configErr = errors.New("No hosts added")
 	}
-	s.Args = fmt.Sprint(strings.Join(args, " "))
+
+	if len(s.Args) == 0 {
+		s.Args = fmt.Sprint(strings.Join(args, " "))
+	}
 	args = append(args, s.configHosts...)
 
 	fmt.Println(args)
