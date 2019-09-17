@@ -21,7 +21,8 @@ func (f *DisallowedFlagError) Error() string {
 
 // DisallowedFlags is a list of flags that will break the nmap library's
 // ability to parse the output
-var DisallowedFlags = []string{"-oN", "-oX", "-oG", "-oA"}
+//var DisallowedFlags = []string{"-oN", "-oX", "-oG", "-oA"}
+var DisallowedFlags = []string{}
 
 // Scan holds one nmap scan. It can be rescanned, diff'ed, and parsed for hosts
 type Scan struct {
