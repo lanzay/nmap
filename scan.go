@@ -185,7 +185,7 @@ func (s Scan) Run() (output Scan, err error) {
 		return s, s.configErr
 	}
 
-	s.configOpts = []string{"-oX", "-"}
+	s.configOpts = append([]string{"-oX", "-"}, s.configOpts...)
 
 	stdout, err := s.Exec()
 	if err != nil {
