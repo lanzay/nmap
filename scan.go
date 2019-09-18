@@ -27,7 +27,8 @@ var DisallowedFlags = []string{}
 // Scan holds one nmap scan. It can be rescanned, diff'ed, and parsed for hosts
 type Scan struct {
 	DisplayArgs string
-	Args        string
+	Args        string // Agr w/o HOSTS
+	Arg         string // Completly arg
 	Hosts       map[string]Host
 
 	configHosts    []string
@@ -49,7 +50,6 @@ func (scan rawScan) cleanScan(s Scan) Scan {
 		newHost.parentScan = &s
 		s.Hosts[newHost.Address] = newHost
 	}
-
 	return s
 }
 
